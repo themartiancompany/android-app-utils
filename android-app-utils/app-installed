@@ -1,0 +1,229 @@
+#!/usr/bin/env bash
+#
+# SPDX-License-Identifier: AGPL-3.0
+
+# I don't remember why
+# I had this shebang
+# so let's have it just in case
+# until next test
+#!/data/data/com.termux/files/usr/bin/env bash
+
+_bin="$( \
+  dirname \
+    "$( \
+      command \
+        -v \
+	  "env")")"
+_lib="${_bin}/../lib"
+_share="${_bin}/../share"
+source \
+  "${_lib}/libcrash-bash/crash-bash"
+
+_root_requirements() {
+  _check_cmd \
+    "su"
+}
+
+# shellcheck disable=SC2034
+_global_variables() {
+  get_date=""
+  target_app=""
+  get_mode=""
+  color=""
+  quiet=""
+}
+
+_path_get() {
+  local \
+    _cmd=() \
+    _exists
+  _cmd=(
+    pm
+      path
+      "${_target}"
+  )
+  _exists="$( \
+    su \
+      -c \
+      "${_cmd[*]}" || \
+    true)"
+  if [[ "${_exists}" == "package:"* ]]; then
+    _msg_info \
+      "Found ${_target}"
+    echo \
+      'true'
+  elif [[ "${_exists}" == "" ]]; then
+    _msg_info \
+      "Not found ${_target}"
+    echo \
+      'false'
+  fi
+}
+
+_list_get(){
+  local \
+    _cmd=() \
+    _pkg \
+    _pkgs=()
+  _cmd=(
+    pm
+      list
+      packages
+  )
+  _pkgs=( $( \
+    su \
+      -c \
+      "${_cmd[@]}")
+  )
+  for _pkg in "${_pkgs[@]}"; do
+    _app="${_pkg#package:*}"
+    if [[ "${_app}" == "${_target}" ]]; then
+      echo \
+        'true'
+      return \
+        0
+    fi
+  done
+  echo \
+    'false'
+}
+
+_mode_auto_detect(){
+  local \
+    _sdk \
+    _cmd
+  _sdk="$( \
+    sdk-version)"
+  if (( 32 < "${_sdk}" )); then
+    _cmd="list"
+  elif (( "${_sdk}" < 28 )); then
+    _cmd="path"
+  else
+    _cmd="path"
+  fi
+  echo \
+    "${_cmd}"
+}
+
+_app_installed() {
+  local \
+    _target="${1}" \
+    _mode="${2}" \
+    _cmd=() \
+    _pkg \
+    _app \
+    _apps=() 
+  "_${_mode}_get"
+}
+
+_set_overrides() {
+  _set_override \
+    "get" \
+    "date" \
+    "$(_get_date_human)"
+  _set_override \
+    "get" \
+    "mode" \
+    "$(_mode_auto_detect)"
+  if [[ -v override_color ]]; then
+    color="${override_color}"
+  elif [[ -z "${color}" ]]; then
+    color="n"
+  fi
+  if [[ -v override_quiet ]]; then
+    quiet="${override_quiet}"
+  elif [[ -z "${quiet}" ]]; then
+    quiet="y"
+  fi
+}
+
+# Shows configuration options.
+_show_config() {
+  _msg_info "${app_name} configuration"
+  _msg_info "                 Get date:   $(_get "get" "date")"
+  _msg_info "                 Get mode:   $(_get "get" "mode")"
+  _msg_info "                      App:   $(_get "target" "app")"
+}
+
+# Show help usage, with an exit status.
+# $1: exit status number.
+_usage() {
+  local \
+    _usage_text
+  IFS='' \
+    read \
+      -r \
+      -d '' \
+      _usage_text << \
+        ENDUSAGETEXT || true
+
+Check if an Android application is installed.
+
+Usage:
+  $(_get "app" "name")
+    [options]
+    <app>
+  options:
+     -m <mode>            How to get installed apps.
+                          Default: $(_get "get" "mode")
+     -h                   This message.
+     -v                   Enable verbose output
+ENDUSAGETEXT
+  _printf \
+    '%s\n' \
+    "${_usage_text}"
+  exit \
+    "${1}"
+}
+
+_globals
+_global_variables
+# shellcheck disable=SC2004
+# shellcheck disable=SC2034
+while \
+  getopts \
+    'm:cvh?' \
+    arg; do
+  case \
+    "${arg}" in
+    m) override_get_mode="${OPTARG}" ;;
+    c) override_color="y" ;;
+    v) override_quiet="n" ;;
+    h|?) _set_overrides && \
+	 _usage \
+           0 ;;
+    *)
+    _msg_error \
+      "Invalid argument '${arg}'" \
+      0 && \
+    _set_overrides && \
+    _usage \
+      1
+    ;;
+  esac
+done
+shift \
+  $(( \
+    OPTIND - 1 \
+  ))
+(( $# < 1 )) && \
+  _usage \
+    1
+_set \
+  "target" \
+  "app" \
+  "${1}"
+_set_overrides
+app_opts=(
+  "$(_get \
+       "target" \
+       "app")"
+  "$(_get \
+       "get" \
+       "mode")"
+)
+_show_config
+_app_installed \
+  "${app_opts[@]}"
+
+# vim:set sw=2 sts=-1 et:
