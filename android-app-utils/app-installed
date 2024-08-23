@@ -21,7 +21,8 @@ source \
 
 _root_requirements() {
   _check_cmd \
-    "su"
+    "su" \
+    "tsu"
 }
 
 # shellcheck disable=SC2034
