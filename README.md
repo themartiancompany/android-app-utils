@@ -61,7 +61,7 @@ ur \
 A censorable HTTP Github mirror of the recipe published there,
 containing a full list of the software dependencies needed to run the
 tools is hosted on
-[evm-contracts-tools-ur](
+[android-app-utils-ur](
   https://github.com/themartiancompany/android-app-utils-ur).
 
 Be aware the mirror could go offline any time as Github and more
