@@ -175,12 +175,14 @@ _usage() {
       _usage_text << \
         ENDUSAGETEXT || true
 
-Check if an Android application is installed.
+Checks if an Android application is installed.
 
 Usage:
+
   ${app_name}
     [options]
     <app>
+
   options:
      -m <mode>            How to get installed apps.
                           Default: ${get_mode}
