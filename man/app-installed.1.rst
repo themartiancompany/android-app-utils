@@ -21,9 +21,50 @@
    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-====================================
-Android Application Utils Authors
-====================================
+=================
+app-installed
+=================
 
-* Pellegrino Prevete <pellegrinoprevete@gmail.com>
-* Truocolo <truocolo@aol.com>
+--------------------------------------------------------------
+Application Installed
+--------------------------------------------------------------
+:Version: app-installed |version|
+:Manual section: 1
+
+Synopsis
+========
+
+app-installed *[options]* *app*
+
+
+Description
+===========
+
+Checks if an Android application is installed.
+
+
+Options
+=======
+
+-m mode                 How to get installed apps.
+
+-h                      Display help.
+-c                      Enable color output
+-v                      Enable verbose output
+
+Bugs
+====
+
+https://github.com/themartiancompany/android-app-utils/-/issues
+
+Copyright
+=========
+
+Copyright Pellegrino Prevete. AGPL-3.0.
+
+See also
+========
+
+* displayctl
+
+.. include:: variables.rst
