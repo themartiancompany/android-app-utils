@@ -229,10 +229,7 @@ shift \
 (( $# < 1 )) && \
   _usage \
     1
-_set \
-  "target" \
-  "app" \
-  "${1}"
+target_app="${1}"
 _set_overrides
 app_opts=(
   "${target_app}"
