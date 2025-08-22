@@ -216,12 +216,8 @@ _set \
   "${1}"
 _set_overrides
 app_opts=(
-  "$(_get \
-       "target" \
-       "app")"
-  "$(_get \
-       "get" \
-       "mode")"
+  "${target_app}"
+  "${get_mode}"
 )
 _show_config
 _app_installed \
