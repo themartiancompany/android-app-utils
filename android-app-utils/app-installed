@@ -1,6 +1,30 @@
 #!/usr/bin/env bash
-#
+
 # SPDX-License-Identifier: AGPL-3.0
+
+#    -----------------------------------------------------
+#    Copyright © 2024, 2025, 2026  Pellegrino Prevete
+#
+#    All rights reserved
+#    -----------------------------------------------------
+#
+#    This program is free software: you can redistribute
+#    it and/or modify it under the terms of the
+#    GNU Affero General Public License as published by
+#    the Free Software Foundation, either version 3 of
+#    the License, or (at your option) any later version.
+#
+#    This program is distributed in the hope that it
+#    will be useful, but WITHOUT ANY WARRANTY;
+#    without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#    See the GNU Affero General Public License for
+#    more details.
+#
+#    You should have received a copy of the
+#    GNU Affero General Public License
+#    along with this program.
+#    If not, see <https://www.gnu.org/licenses/>.
 
 # I don't remember why
 # I had this shebang
@@ -8,16 +32,16 @@
 # until next test
 #!/data/data/com.termux/files/usr/bin/env bash
 
-_bin="$( \
+_bin="$(
   dirname \
-    "$( \
-      command \
-        -v \
-	  "env")")"
+    "$(command \
+         -v \
+	 "env")")"
 _lib="${_bin}/../lib"
 _share="${_bin}/../share"
+_crash_bash="${_lib}/libcrash-bash/crash-bash"
 source \
-  "${_lib}/libcrash-bash/crash-bash"
+  "${_crash_bash}"
 
 _root_requirements() {
   _check_cmd \
@@ -49,13 +73,19 @@ _path_get() {
       "${_cmd[*]}" || \
     true)"
   if [[ "${_exists}" == "package:"* ]]; then
+    _msg=(
+      "Found '${_target}'."
+    )
     _msg_info \
-      "Found ${_target}"
+      "${_msg[*]}"
     echo \
       'true'
   elif [[ "${_exists}" == "" ]]; then
+    _msg=(
+      "Not found ${_target}."
+    )
     _msg_info \
-      "Not found ${_target}"
+      "${_msg[*]}"
     echo \
       'false'
   fi
@@ -118,14 +148,6 @@ _app_installed() {
 }
 
 _set_overrides() {
-  _set_override \
-    "get" \
-    "date" \
-    "$(_get_date_human)"
-  _set_override \
-    "get" \
-    "mode" \
-    "$(_mode_auto_detect)"
   if [[ -v override_color ]]; then
     color="${override_color}"
   elif [[ -z "${color}" ]]; then
@@ -136,14 +158,22 @@ _set_overrides() {
   elif [[ -z "${quiet}" ]]; then
     quiet="y"
   fi
+  _set_override \
+    "get" \
+    "date" \
+    "$(_get_date_human)"
+  _set_override \
+    "get" \
+    "mode" \
+    "$(_mode_auto_detect)"
 }
 
 # Shows configuration options.
 _show_config() {
   _msg_info "${app_name} configuration"
-  _msg_info "                 Get date:   $(_get "get" "date")"
-  _msg_info "                 Get mode:   $(_get "get" "mode")"
-  _msg_info "                      App:   $(_get "target" "app")"
+  _msg_info "                 Get date:   ${get_date}"
+  _msg_info "                 Get mode:   ${get_mode}"
+  _msg_info "                      App:   ${target_app}"
 }
 
 # Show help usage, with an exit status.
@@ -166,7 +196,7 @@ Usage:
     <app>
   options:
      -m <mode>            How to get installed apps.
-                          Default: $(_get "get" "mode")
+                          Default: ${get_mode}
      -h                   This message.
      -v                   Enable verbose output
 ENDUSAGETEXT
@@ -187,41 +217,41 @@ while \
     arg; do
   case \
     "${arg}" in
-    m) override_get_mode="${OPTARG}" ;;
-    c) override_color="y" ;;
-    v) override_quiet="n" ;;
-    h|?) _set_overrides && \
-	 _usage \
-           0 ;;
+    m)
+      override_get_mode="${OPTARG}" ;;
+    c)
+      override_color="y" ;;
+    v)
+      override_quiet="n" ;;
+    h|?)
+      _set_overrides
+      _usage \
+        0 ;;
     *)
-    _msg_error \
-      "Invalid argument '${arg}'" \
-      0 && \
-    _set_overrides && \
-    _usage \
-      1
-    ;;
+      _msg=(
+      "Invalid argument '${arg}'."
+      )
+      _msg_error \
+        "${_msg[*]}" \
+        0 && \
+      _set_overrides
+      _usage \
+        1 ;;
   esac
 done
 shift \
-  $(( \
+  $((
     OPTIND - 1 \
   ))
-(( $# < 1 )) && \
+if (( $# < 1 )); then
   _usage \
     1
-_set \
-  "target" \
-  "app" \
-  "${1}"
+fi
+target_app="${1}"
 _set_overrides
 app_opts=(
-  "$(_get \
-       "target" \
-       "app")"
-  "$(_get \
-       "get" \
-       "mode")"
+  "${target_app}"
+  "${get_mode}"
 )
 _show_config
 _app_installed \
