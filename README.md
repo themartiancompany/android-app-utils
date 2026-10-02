@@ -31,6 +31,11 @@ The programs have been written using the
   https://github.com/themartiancompany/crash-bash)
 library.
 
+It is a dependency for the Android
+Window Manager command-line program,
+[`android-wm`](
+  https://github.com/themartiancompany/android-wm).
+
 ### License
 
 The programs are released under the
