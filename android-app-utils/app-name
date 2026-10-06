@@ -130,7 +130,9 @@ _root_get(){
     _pkg \
     _pkgs=() \
     _labels=() \
-    _app_label
+    _app_label \
+    _app_label_line \
+    _app_label_lines
   _apk_path_get \
     "${_package_name}"
   _msg=(
@@ -171,8 +173,6 @@ _root_get(){
     "${_msg[*]}"
   echo \
     "${_app_label}"
-  aapt \
-    dum
   # _pkgs=( $( \
   #   su \
   #     -c \
