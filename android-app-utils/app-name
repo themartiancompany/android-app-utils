@@ -162,6 +162,7 @@ _root_get(){
       "${_msg[*]}" \
       1
   fi
+  _app_label_line="${_app_label_line%$'\n'}"
   _app_label="${_app_label_line#application: label=\'}"
   _app_label="${_app_label_line% icon=\'*}"
   _app_label="${_app_label_line%\'*}"
