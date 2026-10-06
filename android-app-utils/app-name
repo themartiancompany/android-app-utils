@@ -119,7 +119,7 @@ _apk_path_get() {
   _apk_path="${_out#package:}"
 }
 
-_list_get(){
+_root_get(){
   local \
     _package_name="${1}" \
     _apk_path \
@@ -150,19 +150,19 @@ _list_get(){
 
 _mode_auto_detect(){
   local \
-    _sdk \
-    _cmd
-  _sdk="$( \
-    sdk-version)"
-  if (( 32 < "${_sdk}" )); then
-    _cmd="list"
-  elif (( "${_sdk}" < 28 )); then
-    _cmd="path"
-  else
-    _cmd="path"
+    _mode \
+    _os
+  _os="$(
+    uname \
+      -o)"
+  _mode="root"
+  if [[ "${_os}" == "Android" ]]; then
+    _mode="root"
   fi
-  echo \
-    "${_cmd}"
+  _set_override \
+    "get" \
+    "mode" \
+    "${_mode}"
 }
 
 _app_name() {
@@ -170,6 +170,7 @@ _app_name() {
     _target="${1}" \
     _mode="${2}" \
     _cmd=() \
+    _msg=() \
     _args=() \
     _pkg \
     _app \
@@ -178,8 +179,14 @@ _app_name() {
     _args+=(
       "${_target}"
     )
+  else
+    _msg=(
+      "Unknown retrieval"
+      "mode '${_mode}'."
+    )
   fi
-  "_${_mode}_get"
+  "_${_mode}_get" \
+    "${_args[@]}"
 }
 
 _set_overrides() {
@@ -197,10 +204,7 @@ _set_overrides() {
     "get" \
     "date" \
     "$(_get_date_human)"
-  _set_override \
-    "get" \
-    "mode" \
-    "$(_mode_auto_detect)"
+  _get_mode_auto_detect
 }
 
 # Shows configuration options.
@@ -234,6 +238,7 @@ Usage:
   options:
 
      -m <mode>            How to get installed apps.
+                          It can be 'root'
                           Default: ${get_mode}
 
      -h                   This message.
