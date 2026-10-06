@@ -184,6 +184,9 @@ _app_name() {
       "Unknown retrieval"
       "mode '${_mode}'."
     )
+    _msg_error \
+      "${_msg[*]}" \
+      1
   fi
   "_${_mode}_get" \
     "${_args[@]}"
