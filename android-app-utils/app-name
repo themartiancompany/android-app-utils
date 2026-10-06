@@ -148,7 +148,7 @@ _root_get(){
   #   'false'
 }
 
-_mode_auto_detect(){
+_get_mode_auto_detect(){
   local \
     _mode \
     _os
