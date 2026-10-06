@@ -51,8 +51,13 @@ _root_requirements() {
     "aapt" \
     "aapt"
   _check_cmd \
+    "grep"
+  _check_cmd \
     "su" \
     "sudo"
+  _check_cmd \
+    "wc" \
+    "coreutils"
 }
 
 # shellcheck disable=SC2034

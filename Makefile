@@ -53,7 +53,33 @@ SCRIPT_FILES=\
   $(wildcard \
       $(_PROJECT)/*)
 
-all:
+all: build-man
+
+prepare: prepare-man prepare-scripts
+
+prepare-man:
+
+	git \
+	  submodule \
+	    update \
+	    --init \
+	      "man" || \
+	true
+
+build-man:
+
+	make \
+	  prepare
+	mkdir \
+	  -p \
+	  "build/man"
+	cd \
+	  "man"; \
+	make \
+	  build-man
+	cp \
+	  "man/build/"* \
+	  "build/man"
 
 check: shellcheck
 
@@ -97,4 +123,4 @@ uninstall-scripts:
 	  "$(BIN_DIR)/app-label" \
 	  "$(BIN_DIR)/app-name"
 
-.PHONY: check install install-doc install-scripts shellcheck uninstall unistall-scripts
+.PHONY: build-man check install install-doc install-scripts prepare prepare-man shellcheck uninstall unistall-scripts
