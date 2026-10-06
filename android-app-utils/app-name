@@ -175,7 +175,7 @@ _app_name() {
     _pkg \
     _app \
     _apps=() 
-  if [[ "${_mode}" == "get" ]]; then
+  if [[ "${_mode}" == "root" ]]; then
     _args+=(
       "${_target}"
     )
