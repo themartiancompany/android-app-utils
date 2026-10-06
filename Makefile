@@ -76,7 +76,8 @@ install-scripts:
 	  "$(BIN_DIR)/app-name"
 	$(_MAKE_LINK) \
 	  "$(PREFIX)/usr/bin/app-name" \
-	  "$(BIN_DIR)/app-label"
+	  "$(BIN_DIR)/app-label" || \
+	true
 
 install-doc:
 
