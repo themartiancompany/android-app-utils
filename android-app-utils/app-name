@@ -97,32 +97,55 @@ _path_get() {
   fi
 }
 
+_apk_path_get() {
+  local \
+    _package_name="${1}"
+    _cmd=() \
+    _out
+  _cmd+=(
+    pm
+      path
+      "${_package_name}"
+  )
+  _out="$(
+    "${_cmd[@]}" || \
+    true)"
+  if [[ "${_out}" == "" ]]; then
+    _out="$(
+      su \
+        -c \
+          "${_cmd[*]}")"
+  fi
+  _apk_path="${_out#package:}"
+}
+
 _list_get(){
   local \
+    _package_name="${1}" \
+    _apk_path \
     _cmd=() \
     _pkg \
     _pkgs=()
-  _cmd=(
-    pm
-      list
-      packages
-  )
-  _pkgs=( $( \
-    su \
-      -c \
-      "${_cmd[@]}")
-  )
-  for _pkg in "${_pkgs[@]}"; do
-    _app="${_pkg#package:*}"
-    if [[ "${_app}" == "${_target}" ]]; then
-      echo \
-        'true'
-      return \
-        0
-    fi
-  done
+  _apk_path_get \
+    "${_package_name}"
   echo \
-    'false'
+    "${_apk_path}"
+  # _pkgs=( $( \
+  #   su \
+  #     -c \
+  #     "${_cmd[@]}")
+  # )
+  # for _pkg in "${_pkgs[@]}"; do
+  #   _app="${_pkg#package:*}"
+  #   if [[ "${_app}" == "${_target}" ]]; then
+  #     echo \
+  #       'true'
+  #     return \
+  #       0
+  #   fi
+  # done
+  # echo \
+  #   'false'
 }
 
 _mode_auto_detect(){
@@ -147,9 +170,15 @@ _app_name() {
     _target="${1}" \
     _mode="${2}" \
     _cmd=() \
+    _args=() \
     _pkg \
     _app \
     _apps=() 
+  if [[ "${_mode}" == "get" ]]; then
+    _args+=(
+      "${_target}"
+    )
+  fi
   "_${_mode}_get"
 }
 
