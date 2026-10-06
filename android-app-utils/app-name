@@ -116,6 +116,16 @@ _apk_path_get() {
     "${_cmd[@]}" \
     2>&1 || \
     true)"
+  _out_lines="$(
+    echo \
+      "${_out}" |
+        wc \
+          -l)"
+  _msg=(
+    "Lines in output: '${_out_lines[*]}'."
+  )
+  _msg_info \
+    "${_msg[*]}"
   if [[ "${_out}" == "${_no_permission[*]}" ]]; then
     _msg=(
       "No permission to read package"
@@ -129,7 +139,8 @@ _apk_path_get() {
     _out="$(
       su \
         -c \
-          "${_cmd[*]}")"
+          "${_cmd[*]}" || \
+      true)"
   fi
   _apk_path="${_out#package:}"
 }
