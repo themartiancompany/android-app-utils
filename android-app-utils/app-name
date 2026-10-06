@@ -164,8 +164,8 @@ _root_get(){
   fi
   _app_label_line="${_app_label_line%$'\n'}"
   _app_label="${_app_label_line#application: label=\'}"
-  _app_label="${_app_label_line% icon=\'*}"
-  _app_label="${_app_label_line%\'*}"
+  _app_label="${_app_label% icon=\'*}"
+  _app_label="${_app_label%\'*}"
   _msg=(
     "Got label"
     "'${_app_label}'."
