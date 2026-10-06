@@ -126,7 +126,7 @@ _apk_path_get() {
   )
   _msg_info \
     "${_msg[*]}"
-  if [[ "${_out}" == "${_no_permission[*]}" ]]; then
+  if [[ "${_out}" == "${_no_permission[*]}"* ]]; then
     _msg=(
       "No permission to read package"
       "path."
