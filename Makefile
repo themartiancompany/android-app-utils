@@ -101,7 +101,7 @@ install-scripts:
 	  "$(_PROJECT)/app-name" \
 	  "$(BIN_DIR)/app-name"
 	$(_MAKE_LINK) \
-	  "$(PREFIX)/usr/bin/app-name" \
+	  "$(PREFIX)/bin/app-name" \
 	  "$(BIN_DIR)/app-label" || \
 	true
 
