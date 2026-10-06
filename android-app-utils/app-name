@@ -102,7 +102,9 @@ _apk_path_get() {
     _package_name="${1}" \
     _cmd=() \
     _out \
-    _no_permission=()
+    _no_permission=() \
+    _no_permission_flag
+  _no_permission_flag="false"
   _no_permission+=(
     "cmd: Failure calling service package:"
       "Failed transaction ("
@@ -129,13 +131,21 @@ _apk_path_get() {
   if [[ "${_out}" == "${_no_permission[*]}"* ]]; then
     _msg=(
       "No permission to read package"
-      "path."
+      "path. Suggested to give permission"
+      "to user to read packages with"
+      "'sudo"
+        "pm"
+          "grant"
+            "com.termux"
+              "android.permission.PACKAGE_USAGE_STATS'."
     )
-    _msg_error \
+    _msg_warning \
       "${_msg[*]}" \
-      1
+      0
+    _no_permission_flag="true"
   fi
-  if [[ "${_out}" == "" ]]; then
+  if [[ "${_out}" == "" || \
+        "${_no_permission_flag}" == "true"  ]]; then
     _out="$(
       su \
         -c \
