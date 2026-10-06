@@ -30,6 +30,22 @@ PREFIX ?= /usr/local
 DOC_DIR=$(DESTDIR)$(PREFIX)/share/doc/$(_PROJECT)
 BIN_DIR=$(DESTDIR)$(PREFIX)/bin
 
+_INSTALL_FILE=\
+  install \
+    -vDm644
+_INSTALL_DIR=\
+  install \
+    -vdm755
+_INSTALL_EXE=\
+  install \
+    -vDm755
+_MAKE_EXE=\
+  chmod \
+    755
+_MAKE_LINK=\
+  ln \
+    -sv
+
 DOC_FILES=\
   $(wildcard \
       *.rst)
@@ -52,14 +68,15 @@ install: install-scripts install-doc
 
 install-scripts:
 
-	install \
-	  -vDm755 \
+	$(_INSTALL_EXE) \
 	  "$(_PROJECT)/app-installed" \
 	  "$(BIN_DIR)/app-installed"
-	install \
-	  -vDm755 \
+	$(_INSTALL_EXE) \
 	  "$(_PROJECT)/app-name" \
 	  "$(BIN_DIR)/app-name"
+	$(_MAKE_LINK) \
+	  "$(PREFIX)/usr/bin/app-name" \
+	  "$(BIN_DIR)/app-label"
 
 install-doc:
 
@@ -76,6 +93,7 @@ uninstall-scripts:
 	rm \
 	  -vrf \
 	  "$(BIN_DIR)/app-installed" \
+	  "$(BIN_DIR)/app-label" \
 	  "$(BIN_DIR)/app-name"
 
 .PHONY: check install install-doc install-scripts shellcheck uninstall unistall-scripts

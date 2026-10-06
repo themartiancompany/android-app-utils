@@ -41,11 +41,15 @@ _lib="${_bin}/../lib"
 _share="${_bin}/../share"
 _crash_bash="${_lib}/libcrash-bash/crash-bash"
 _sourced \
-  "${_crash_bash}" || \
+  "${_crash_bash}" \
+  2>"/dev/null" || \
 source \
   "${_crash_bash}"
 
 _root_requirements() {
+  _check_cmd \
+    "aapt" \
+    "aapt"
   _check_cmd \
     "su" \
     "sudo"
@@ -84,7 +88,7 @@ _path_get() {
       'true'
   elif [[ "${_exists}" == "" ]]; then
     _msg=(
-      "Not found '${_target}'."
+      "Not found ${_target}."
     )
     _msg_info \
       "${_msg[*]}"
@@ -138,7 +142,7 @@ _mode_auto_detect(){
     "${_cmd}"
 }
 
-_app_installed() {
+_app_name() {
   local \
     _target="${1}" \
     _mode="${2}" \
@@ -190,17 +194,23 @@ _usage() {
       _usage_text << \
         ENDUSAGETEXT || true
 
-Checks if an Android application is installed.
+Retrieves an installed application label given its package name.
 
 Usage:
+
   ${app_name}
     [options]
     <app>
+
   options:
+
      -m <mode>            How to get installed apps.
                           Default: ${get_mode}
+
      -h                   This message.
+
      -v                   Enable verbose output
+
 ENDUSAGETEXT
   _printf \
     '%s\n' \
@@ -235,7 +245,7 @@ while \
       )
       _msg_error \
         "${_msg[*]}" \
-        0
+        0 && \
       _set_overrides
       _usage \
         1 ;;
@@ -256,7 +266,7 @@ app_opts=(
   "${get_mode}"
 )
 _show_config
-_app_installed \
+_app_name \
   "${app_opts[@]}"
 
 # vim:set sw=2 sts=-1 et:
