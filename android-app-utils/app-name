@@ -99,7 +99,7 @@ _path_get() {
 
 _apk_path_get() {
   local \
-    _package_name="${1}"
+    _package_name="${1}" \
     _cmd=() \
     _out
   _cmd+=(
