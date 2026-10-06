@@ -101,15 +101,30 @@ _apk_path_get() {
   local \
     _package_name="${1}" \
     _cmd=() \
-    _out
+    _out \
+    _no_permission=()
+  _no_permission+=(
+    "cmd: Failure calling service package:"
+      "Failed transaction ("
+  )
   _cmd+=(
     pm
       path
       "${_package_name}"
   )
   _out="$(
-    "${_cmd[@]}" || \
+    "${_cmd[@]}" \
+    2>&1 || \
     true)"
+  if [[ "${_out}" == "${_no_permission[*]}" ]]; then
+    _msg=(
+      "No permission to read package"
+      "path."
+    )
+    _msg_error \
+      "${_msg[*]}" \
+      1
+  fi
   if [[ "${_out}" == "" ]]; then
     _out="$(
       su \
