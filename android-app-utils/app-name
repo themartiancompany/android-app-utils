@@ -64,39 +64,6 @@ _global_variables() {
   quiet=""
 }
 
-_path_get() {
-  local \
-    _cmd=() \
-    _exists
-  _cmd=(
-    pm
-      path
-      "${_target}"
-  )
-  _exists="$( \
-    su \
-      -c \
-      "${_cmd[*]}" || \
-    true)"
-  if [[ "${_exists}" == "package:"* ]]; then
-    _msg=(
-      "Found '${_target}'."
-    )
-    _msg_info \
-      "${_msg[*]}"
-    echo \
-      'true'
-  elif [[ "${_exists}" == "" ]]; then
-    _msg=(
-      "Not found ${_target}."
-    )
-    _msg_info \
-      "${_msg[*]}"
-    echo \
-      'false'
-  fi
-}
-
 _apk_path_get() {
   local \
     _package_name="${1}" \
@@ -161,11 +128,51 @@ _root_get(){
     _apk_path \
     _cmd=() \
     _pkg \
-    _pkgs=()
+    _pkgs=() \
+    _labels=() \
+    _app_label
   _apk_path_get \
     "${_package_name}"
+  _msg=(
+    "Got application APK path"
+    "'${_apk_path}'."
+  )
+  _msg_info \
+    "${_msg[*]}"
+  _app_label_line="$(
+    aapt \
+      dump \
+        badging \
+        "${_apk_path}" |
+      grep \
+        -e \
+          "^application: label='")"
+  _app_label_lines="$(
+    echo \
+      "${_app_label_line}" |
+      wc \
+        -l)"
+  if (( 1 < "${_app_label_lines}" )); then
+    _msg=(
+      "More than a label found."
+    )
+    _msg_error \
+      "${_msg[*]}" \
+      1
+  fi
+  _app_label="${_app_label_line#application: label=\'}"
+  _app_label="${_app_label_line% icon=\'*\'*}"
+  _app_label="${_app_label_line%\'*}"
+  _msg=(
+    "Got label"
+    "'${_app_label}'."
+  )
+  _msg_info \
+    "${_msg[*]}"
   echo \
-    "${_apk_path}"
+    "${_app_label}"
+  aapt \
+    dum
   # _pkgs=( $( \
   #   su \
   #     -c \
