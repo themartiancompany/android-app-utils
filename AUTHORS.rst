@@ -28,7 +28,7 @@
 
 
 ============================================
-Android Application Utilities Authors
+Android Applications Utilities Authors
 ============================================
 
 
@@ -42,11 +42,3 @@ Android Application Utilities Authors
       <truocolo@0x6E5163fC4BFc1511Dbe06bB605cc14a3e462332b>
   * e-mail
       <truocolo@aol.com>
-
-
-===============
-Android Application Utils Authors
-===============
-
-* Pellegrino Prevete <pellegrinoprevete@gmail.com>
-* Truocolo <truocolo@aol.com>

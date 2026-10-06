@@ -29,6 +29,7 @@ _PROJECT=android-app-utils
 PREFIX ?= /usr/local
 DOC_DIR=$(DESTDIR)$(PREFIX)/share/doc/$(_PROJECT)
 BIN_DIR=$(DESTDIR)$(PREFIX)/bin
+MAN_DIR?=$(DESTDIR)$(PREFIX)/share/man
 
 _INSTALL_FILE=\
   install \
@@ -52,6 +53,31 @@ DOC_FILES=\
 SCRIPT_FILES=\
   $(wildcard \
       $(_PROJECT)/*)
+
+_BUILD_TARGETS=\
+  build-man
+_INSTALL_DOC_TARGETS=\
+  install-doc \
+  install-man
+_INSTALL_TARGETS=\
+  $(_INSTALL_DOC_TARGETS) \
+  install-scripts
+_PREPARE_TARGETS=\
+  prepare-man
+_UNINSTALL_TARGETS=\
+  uninstall-man \
+  uninstall-scripts
+_CHECK_TARGETS=\
+  shellcheck
+
+_PHONY_TARGETS=\
+  $(_BUILD_TARGETS) \
+  check \
+  $(_CHECK_TARGETS) \
+  install \
+  $(_INSTALL_TARGETS) \
+  $(_UNINSTALL_TARGETS) \
+  uninstall
 
 all: build-man
 
@@ -83,14 +109,14 @@ build-man:
 
 check: shellcheck
 
+install: $(_INSTALL_TARGETS)
+
 shellcheck:
 
 	shellcheck \
 	  -s \
 	    "bash" \
 	  $(SCRIPT_FILES)
-
-install: install-scripts install-doc
 
 install-scripts:
 
@@ -107,11 +133,24 @@ install-scripts:
 
 install-doc:
 
-	install \
-	  -vDm644 \
+	$(_INSTALL_FILE) \
 	  $(DOC_FILES) \
 	  -t \
 	  $(DOC_DIR)
+
+install-man:
+
+	$(_INSTALL_DIR) \
+	  "$(MAN_DIR)/man1"
+	rst2man \
+	  "man/app-installed.1.rst" \
+	  "$(MAN_DIR)/man1/app-installed.1"
+	rst2man \
+	  "man/app-name.1.rst" \
+	  "$(MAN_DIR)/man1/app-name.1"
+	rst2man \
+	  "man/app-name.1.rst" \
+	  "$(MAN_DIR)/man1/app-label.1"
 
 uninstall: uninstall-scripts
 
@@ -123,4 +162,4 @@ uninstall-scripts:
 	  "$(BIN_DIR)/app-label" \
 	  "$(BIN_DIR)/app-name"
 
-.PHONY: build-man check install install-doc install-scripts prepare prepare-man shellcheck uninstall unistall-scripts
+.PHONY: $(_PHONY_TARGETS)

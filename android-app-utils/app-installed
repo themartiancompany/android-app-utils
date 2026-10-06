@@ -26,10 +26,6 @@
 #    along with this program.
 #    If not, see <https://www.gnu.org/licenses/>.
 
-# I don't remember why
-# I had this shebang
-# so let's have it just in case
-# until next test
 #!/data/data/com.termux/files/usr/bin/env bash
 
 _bin="$(
@@ -193,12 +189,15 @@ _usage() {
 Checks if an Android application is installed.
 
 Usage:
+
   ${app_name}
     [options]
     <app>
+
   options:
      -m <mode>            How to get installed apps.
                           Default: ${get_mode}
+
      -h                   This message.
      -v                   Enable verbose output
 ENDUSAGETEXT
