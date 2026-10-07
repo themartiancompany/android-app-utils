@@ -82,7 +82,7 @@ _apk_path_get() {
       "Failed transaction ("
   )
   _cmd+=(
-    pm
+    "/system/bin/pm"
       path
       "${_package_name}"
   )
